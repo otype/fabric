@@ -48,15 +48,17 @@ env.roledefs = {
 }
 
 
-def chef_client():
+def staging():
+    env.hosts = env.roledefs['DEV']
+
+
+def production():
+    env.hosts = env.roledefs['LIVE']
+
+
+def single_chef_client():
     sudo('chef-client')
 
-
-@roles('DEV')
-def staging():
-    execute(chef_client)
-
-
-@roles('LIVE')
-def production():
-    execute(chef_client)
+def chef_client():
+    require('hosts', provided_by=[production, staging])
+    execute(single_chef_client)

@@ -30,11 +30,11 @@ env.roledefs = {
 }
 
 # Genapi info
+#noinspection PyDictCreation
 deployr = {}
 deployr['user'] = 'deployr'
 deployr['home_dir'] = '/home/deployr'
 deployr['app_name'] = 'deployr'
-deployr['deploy_dir'] = '/opt/deployr'
 deployr['bitbucket'] = {}
 deployr['bitbucket']['repo'] = 'git@bitbucket.org:apitrary/deployr.git'
 deployr['bitbucket']['parent'] = 'origin'
@@ -52,10 +52,6 @@ def staging():
     env.hosts = ["app1.dev.apitrary.net"]
 
 
-def create_deployr_dir():
-    sudo("mkdir -p {}".format(deployr['deploy_dir']))
-
-
 def pack_up_deployr():
     local("cd /tmp; "\
           "rm -rf /tmp/deployr; "\
@@ -71,36 +67,41 @@ def scp_to_all_hosts():
 
 
 def extract_to_app_dir():
-    sudo("cd {} && tar xvzf /tmp/deployr.tar.gz".format(deployr['deploy_dir']))
+    sudo("cd /tmp && tar xvzf /tmp/deployr.tar.gz")
 
 
-def install_pip_deps():
-    sudo("cd {} && pip install -r requirements.txt".format(deployr['deploy_dir']))
+def setup_py_install():
+    sudo("cd /tmp/deployr && python setup.py install")
 
 
 def setup():
     "Create all base directories"
     require('hosts', provided_by=[production, staging])
-    execute(create_deployr_dir)
 
 
 def supervisor_stop():
     sudo("supervisorctl stop deployr")
 
+
 def supervisor_remove():
     sudo("supervisorctl remove deployr")
+
 
 def supervisor_reread():
     sudo("supervisorctl reread")
 
+
 def supervisor_add():
     sudo("supervisorctl add deployr")
+
 
 def supervisor_start():
     sudo("supervisorctl add deployr")
 
+
 def supervisor_tail():
     sudo("supervisorctl tail deployr")
+
 
 def supervisor_all():
     execute(supervisor_stop)
@@ -108,11 +109,12 @@ def supervisor_all():
     execute(supervisor_reread)
     execute(supervisor_add)
 
+
 def deploy():
-    "Deploy deployr"
+    """Deploy deployr"""
     execute(pack_up_deployr)
     execute(scp_to_all_hosts)
     execute(extract_to_app_dir)
-    execute(install_pip_deps)
+    execute(setup_py_install)
     execute(supervisor_all)
 

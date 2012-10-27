@@ -34,7 +34,6 @@ genapi = {}
 genapi['user'] = 'genapi'
 genapi['home_dir'] = '/home/genapi'
 genapi['app_name'] = 'pygenapi'
-genapi['deploy_dir'] = '/opt/genapi/pygenapi'
 genapi['bitbucket'] = {}
 genapi['bitbucket']['repo'] = 'git@bitbucket.org:apitrary/pygenapi.git'
 genapi['bitbucket']['parent'] = 'origin'
@@ -52,10 +51,6 @@ def staging():
     env.hosts = ["app1.dev.apitrary.net"]
 
 
-def create_genapi_dir():
-    sudo("mkdir -p {}".format(genapi['deploy_dir']))
-
-
 def pack_up_pygenapi():
     local("cd /tmp; "\
           "rm -rf /tmp/pygenapi; "\
@@ -71,23 +66,23 @@ def scp_to_all_hosts():
 
 
 def extract_to_app_dir():
-    sudo("cd {} && tar xvzf /tmp/pygenapi.tar.gz".format(genapi['deploy_dir']))
+    sudo("cd /tmp/pygenapi && tar xvzf /tmp/pygenapi.tar.gz")
 
 
-def install_pip_deps():
-    sudo("cd {} && pip install -r requirements.txt".format(genapi['deploy_dir']))
+def setup_py_install():
+    sudo("cd /tmp/pygenapi && python setup.py install")
 
 
 def setup():
     "Create all base directories"
     require('hosts', provided_by=[production, staging])
-    execute(create_genapi_dir)
 
 
 def deploy():
     "Deploy genapi"
+    require('hosts', provided_by=[production, staging])
     execute(pack_up_pygenapi)
     execute(scp_to_all_hosts)
     execute(extract_to_app_dir)
-    execute(install_pip_deps)
+    execute(setup_py_install)
 
