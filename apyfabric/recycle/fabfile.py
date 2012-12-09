@@ -8,7 +8,6 @@
     Copyright (c) 2012 apitrary
 
 """
-import logging
 from fabric.api import sudo
 from fabric.decorators import roles
 from fabric.state import env
