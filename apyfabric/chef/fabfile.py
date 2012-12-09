@@ -24,40 +24,42 @@ env.roledefs = {
     "DEV": [
         "app1.dev.apitrary.net",
         "db1.dev.apitrary.net",
-        "lbapi1.dev.apitrary.net",
-        "riak1.dev.apitrary.net",
-        "rmq1.dev.apitrary.net",
+        #        "lbapi1.dev.apitrary.net",
+        #        "riak1.dev.apitrary.net",
+        #        "rmq1.dev.apitrary.net",
         "web1.dev.apitrary.net"
     ],
     "LIVE": [
         "app1.live.apitrary.net",
         "app3.live.apitrary.net",
         "cache1.live.apitrary.net",
-        "chef1.live.apitrary.net",
+        #        "chef1.live.apitrary.net",
         "lbapi1.live.apitrary.net",
-        #            "monitor1.live.apitrary.net",
+        #        "monitor1.live.apitrary.net",
         "pgdb1.live.apitrary.net",
         "rmq1.live.apitrary.net",
         "riak1.live.apitrary.net",
         "riak3.live.apitrary.net",
         "riak5.live.apitrary.net",
-        #            "web1.live.apitrary.net",
-        #            "web2.live.apitrary.net",
+        #        "web1.live.apitrary.net",
+        #        "web2.live.apitrary.net",
         "web3.live.apitrary.net"
     ]
 }
 
-
+@roles('DEV')
 def staging():
-    env.hosts = env.roledefs['DEV']
+    execute(single_chef_client)
 
 
+@roles('LIVE')
 def production():
-    env.hosts = env.roledefs['LIVE']
+    execute(single_chef_client)
 
 
 def single_chef_client():
     sudo('chef-client')
+
 
 def chef_client():
     require('hosts', provided_by=[production, staging])

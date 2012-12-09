@@ -9,7 +9,7 @@
 
 """
 from fabric.api import sudo
-from fabric.operations import  local, require
+from fabric.operations import   require
 from fabric.state import env
 from fabric.tasks import execute
 
@@ -46,37 +46,17 @@ def production():
         "app1.live.apitrary.net",
         "app3.live.apitrary.net"
     ]
+    env.config_env = 'live'
 
 
 def staging():
     env.hosts = ["app1.dev.apitrary.net"]
+    env.config_env = 'dev'
 
 
-def pack_up_deployr():
-    local("cd /tmp; "\
-          "rm -rf /tmp/deployr; "\
-          "rm -f /tmp/deployr*; "\
-          "git clone {} deployr && "\
-          "cd /tmp/deployr && git archive master | gzip > /tmp/deployr.tar.gz".format(deployr['bitbucket']['repo'])
-    )
-
-
-def scp_to_all_hosts():
-    for hostname in env.hosts:
-        local("scp /tmp/deployr.tar.gz {}:/tmp/deployr.tar.gz".format(hostname))
-
-
-def extract_to_app_dir():
-    sudo("cd /tmp && tar xvzf /tmp/deployr.tar.gz")
-
-
-def setup_py_install():
-    sudo("cd /tmp/deployr && python setup.py install")
-
-
-def setup():
-    "Create all base directories"
-    require('hosts', provided_by=[production, staging])
+def write_config():
+    require('config_env', provided_by=[production, staging])
+    sudo("deployr.py -w {}".format(env.config_env))
 
 
 def supervisor_stop():
@@ -112,9 +92,9 @@ def supervisor_all():
 
 def deploy():
     """Deploy deployr"""
-    execute(pack_up_deployr)
-    execute(scp_to_all_hosts)
-    execute(extract_to_app_dir)
-    execute(setup_py_install)
     execute(supervisor_all)
 
+
+def create_config():
+    require('hosts', provided_by=[production, staging])
+    execute(write_config)

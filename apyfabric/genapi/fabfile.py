@@ -66,7 +66,7 @@ def scp_to_all_hosts():
 
 
 def extract_to_app_dir():
-    sudo("cd /tmp/pygenapi && tar xvzf /tmp/pygenapi.tar.gz")
+    sudo("mkdir -p /tmp/pygenapi && cd /tmp/pygenapi && tar xvzf /tmp/pygenapi.tar.gz")
 
 
 def setup_py_install():
@@ -85,4 +85,3 @@ def deploy():
     execute(scp_to_all_hosts)
     execute(extract_to_app_dir)
     execute(setup_py_install)
-
