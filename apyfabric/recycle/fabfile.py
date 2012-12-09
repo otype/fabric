@@ -14,11 +14,6 @@ from fabric.decorators import roles
 from fabric.state import env
 from fabric.tasks import execute
 
-LOG_FORMAT = '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
-logging.basicConfig(format=LOG_FORMAT)
-logger = logging.getLogger('recycle')
-logger.setLevel(logging.DEBUG)
-
 # Load the global configs
 env.use_shell = True
 env.use_ssh_config = True
