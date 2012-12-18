@@ -82,6 +82,7 @@ def dev_lb_supervisor_restart():
 def dev_recycle():
     execute(dev_rabbit_restart)
     execute(dev_nginx_restart)
+    execute(dev_web_delayed_job_restart)
     execute(dev_app_supervisor_restart)
     execute(dev_lb_supervisor_restart)
     execute(dev_app_trackr_restart)
@@ -89,6 +90,7 @@ def dev_recycle():
 def live_recycle():
     execute(live_rabbit_restart)
     execute(live_nginx_restart)
+    execute(live_web_delayed_job_restart)
     execute(live_app_supervisor_restart)
     execute(live_lb_supervisor_restart)
     execute(live_app_trackr_restart)
