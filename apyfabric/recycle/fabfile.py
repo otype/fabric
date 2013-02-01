@@ -54,6 +54,14 @@ def live_web_delayed_job_restart():
 def live_lb_supervisor_restart():
     sudo('supervisorctl restart deployr_balance')
 
+@roles('live-web')
+def live_web_www_thin_restart():
+    sudo('cd /home/rails/www/current && /usr/local/bin/bundle exec thin restart /etc/thin/www.yml')
+
+@roles('live-web')
+def live_web_launchpad_thin_restart():
+    sudo('cd /home/rails/launchpad/current && /usr/local/bin/bundle exec thin restart /etc/thin/launchpad.yml')
+
 @roles('dev-rabbitmq')
 def dev_rabbit_restart():
     sudo('/etc/init.d/rabbitmq-server restart', pty=False)
@@ -79,6 +87,14 @@ def dev_web_delayed_job_restart():
 def dev_lb_supervisor_restart():
     sudo('supervisorctl restart deployr_balance')
 
+@roles('dev-web')
+def dev_web_www_thin_restart():
+    sudo('cd /home/rails/www/current && /usr/local/bin/bundle exec thin restart /etc/thin/www.yml')
+
+@roles('dev-web')
+def dev_web_launchpad_thin_restart():
+    sudo('cd /home/rails/launchpad/current && /usr/local/bin/bundle exec thin restart /etc/thin/launchpad.yml')
+
 def dev_recycle():
     execute(dev_rabbit_restart)
     execute(dev_nginx_restart)
@@ -86,6 +102,8 @@ def dev_recycle():
     execute(dev_app_supervisor_restart)
     execute(dev_lb_supervisor_restart)
     execute(dev_app_trackr_restart)
+#    execute(dev_web_www_thin_restart)
+#    execute(dev_web_launchpad_thin_restart)
 
 def live_recycle():
     execute(live_rabbit_restart)
@@ -94,3 +112,15 @@ def live_recycle():
     execute(live_app_supervisor_restart)
     execute(live_lb_supervisor_restart)
     execute(live_app_trackr_restart)
+#    execute(live_web_www_thin_restart)
+#    execute(live_web_launchpad_thin_restart)
+
+def dev_web_recycle():
+#    execute(dev_web_www_thin_restart)
+#    execute(dev_web_launchpad_thin_restart)
+    print "Use \'cap staging deploy:restart\' instead"
+
+def live_web_recycle():
+#    execute(live_web_www_thin_restart)
+#    execute(live_web_launchpad_thin_restart)
+    print "Use \'cap live deploy:restart\' instead"
