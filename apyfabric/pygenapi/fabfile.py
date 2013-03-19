@@ -31,19 +31,19 @@ env.roledefs = {
 #
 
 def copy_public_ssh_key():
-    put('./apitrary-staging-deploy.pub', '/tmp/apitrary-staging-deploy.pub')
+    put('./assets/apitrary-staging-deploy.pub', '/tmp/apitrary-staging-deploy.pub')
     sudo('mv /tmp/apitrary-staging-deploy.pub /root/.ssh/apitrary-staging-deploy.pub '
          '&& chmod 644 /root/.ssh/apitrary-staging-deploy.pub')
 
 
 def copy_secret_ssh_key():
-    put('./apitrary-staging-deploy', '/tmp/apitrary-staging-deploy')
+    put('./assets/apitrary-staging-deploy', '/tmp/apitrary-staging-deploy')
     sudo('mv /tmp/apitrary-staging-deploy /root/.ssh/apitrary-staging-deploy '
          '&& chmod 600 /root/.ssh/apitrary-staging-deploy')
 
 
 def add_ssh_config():
-    put('./ssh_config', '/tmp/ssh_config')
+    put('./assets/ssh_config', '/tmp/ssh_config')
     sudo('cat /tmp/ssh_config >> /root/.ssh/config')
 
 
