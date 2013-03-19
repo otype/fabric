@@ -10,7 +10,7 @@
 """
 from fabric.api import sudo
 from fabric.decorators import roles
-from fabric.operations import require, local, put, run
+from fabric.operations import put
 from fabric.state import env
 from fabric.tasks import execute
 
