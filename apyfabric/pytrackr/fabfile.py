@@ -10,6 +10,7 @@
 """
 from fabric.api import sudo
 from fabric.decorators import roles
+from fabric.operations import put
 from fabric.state import env
 from fabric.tasks import execute
 
@@ -35,22 +36,33 @@ def install_dependencies():
          'python-dev build-essential supervisor')
 
 
-def create_pygenapi_user():
-    sudo('useradd -c pygenapi -s /usr/sbin/nologin -d /home/genapi -m genapi')
-
-
-def pip_install_pygenapi():
+def pip_install_pytrackr():
     sudo('pip install git+ssh://git@github.com/apitrary/pygenapi.git')
 
 
-def pip_upgrade_pygenapi():
-    sudo('pip install --upgrade git+ssh://git@github.com/apitrary/pygenapi.git')
+def put_supervisor_trackr_config():
+    put('./assets/supervisor_trackr.conf', '/tmp/supervisor_trackr.conf')
+    sudo('mv /tmp/supervisor_trackr.conf /etc/supervisor/conf.d/supervisor_trackr.conf'
+         ' && chmod 644 /etc/supervisor/conf.d/supervisor_trackr.conf'
+         ' && chown root:root /etc/supervisor/conf.d/supervisor_trackr.conf')
+
+
+def create_pytrackr_user():
+    sudo('useradd -c trackr -s /usr/sbin/nologin -d /home/trackr -m trackr')
+
+
+def add_and_restart_supervisor():
+    sudo('supervisorctl stop trackr ; '
+         'supervisorctl remove trackr ; '
+         'supervisorctl reread && supervisorctl add trackr')
 
 
 def initial_setup():
     execute(install_dependencies)
-    execute(create_pygenapi_user)
-    execute(pip_install_pygenapi)
+    execute(pip_install_pytrackr)
+    execute(put_supervisor_trackr_config)
+    execute(create_pytrackr_user)
+    execute(add_and_restart_supervisor)
 
 
 # ROLES-BASED CALLS
@@ -70,18 +82,3 @@ def staging_setup():
 @roles('PRODUCTION')
 def production_setup():
     execute(initial_setup)
-
-
-@roles('TEST')
-def test_update():
-    execute(pip_upgrade_pygenapi)
-
-
-@roles('STAGING')
-def staging_update():
-    execute(pip_upgrade_pygenapi)
-
-
-@roles('PRODUCTION')
-def production_update():
-    execute(pip_upgrade_pygenapi)
