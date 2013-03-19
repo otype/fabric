@@ -29,3 +29,6 @@
 /config/database.yml
 
 /public/assets/
+
+# Python junk
+*.pyc
