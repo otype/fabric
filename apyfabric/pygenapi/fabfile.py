@@ -14,7 +14,9 @@ from fabric.operations import put
 from fabric.state import env
 from fabric.tasks import execute
 
-# Load the global configs
+# GLOBALS
+#
+#
 env.use_shell = True
 env.use_ssh_config = True
 
@@ -23,6 +25,10 @@ env.roledefs = {
     "STAGING": ["app1.dev.apitrary.net"],
     "PRODUCTION": ["app1.live.apitrary.net", "app3.live.apitrary.net"]
 }
+
+# SINGLE STEPS
+#
+#
 
 def copy_public_ssh_key():
     put('./apitrary-staging-deploy.pub', '/tmp/apitrary-staging-deploy.pub')
@@ -72,6 +78,9 @@ def initial_setup():
     execute(pip_install_pygenapi())
 
 
+# ROLES-BASED CALLS
+#
+#
 @roles('TEST')
 def test_setup():
     execute(initial_setup)
