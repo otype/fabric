@@ -22,7 +22,7 @@ env.use_ssh_config = True
 env.warn_only = True
 
 env.roledefs = {
-    "TEST": ["devappnode", "devrmqnode", "devdbnode"],
+    "TEST": ["devappnode", "devrmqnode", "devdbnode", "devlbnode"],
     "STAGING": ["app1.dev.apitrary.net", "rmq1.dev.apitrary.net", "web1.dev.apitrary.net"],
     "PRODUCTION": ["app1.live.apitrary.net", "app3.live.apitrary.net"]
 }
