@@ -58,6 +58,10 @@ def create_pybuildr_user():
     sudo('useradd -c buildr -s /usr/sbin/nologin -d /home/buildr -m buildr')
 
 
+def pip_install_pytools():
+    sudo('pip install git+ssh://git@github.com/apitrary/pytools.git')
+
+
 def add_and_restart_supervisor_for_deployr():
     sudo('supervisorctl stop deployr ; '
          'supervisorctl remove deployr ; '
@@ -76,6 +80,7 @@ def initial_setup():
     execute(put_supervisor_buildr_config)
     execute(create_pydeployr_user)
     execute(create_pybuildr_user)
+    execute(pip_install_pytools)
     execute(add_and_restart_supervisor_for_deployr)
     execute(add_and_restart_supervisor_for_buildr)
 
