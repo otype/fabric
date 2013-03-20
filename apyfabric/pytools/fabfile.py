@@ -22,9 +22,9 @@ env.use_ssh_config = True
 env.warn_only = True
 
 env.roledefs = {
-    "TEST": ["devappnode"],
-    "STAGING": ["app1.dev.apitrary.net"],
-    "PRODUCTION": ["app1.live.apitrary.net", "app3.live.apitrary.net"]
+    "TEST": ["devlbnode", "devpappnode"],
+    "STAGING": ["lbapi1.dev.apitrary.net"],
+    "PRODUCTION": ["lbapi1.live.apitrary.net"]
 }
 
 # SINGLE STEPS
@@ -36,6 +36,13 @@ def install_dependencies():
          'python-dev build-essential supervisor')
 
 
+def put_supervisor_deployr_config():
+    put('./assets/supervisor_deployr.conf', '/tmp/supervisor_deployr.conf')
+    sudo('mv /tmp/supervisor_deployr.conf /etc/supervisor/conf.d/supervisor_deployr.conf'
+         ' && chmod 644 /etc/supervisor/conf.d/supervisor_deployr.conf'
+         ' && chown root:root /etc/supervisor/conf.d/supervisor_deployr.conf')
+
+
 def put_supervisor_buildr_config():
     put('./assets/supervisor_buildr.conf', '/tmp/supervisor_buildr.conf')
     sudo('mv /tmp/supervisor_buildr.conf /etc/supervisor/conf.d/supervisor_buildr.conf'
@@ -43,22 +50,21 @@ def put_supervisor_buildr_config():
          ' && chown root:root /etc/supervisor/conf.d/supervisor_buildr.conf')
 
 
-def pip_install_pybuildr():
-    sudo('rm -rf /root/pytools')
-    sudo('cd /root'
-         ' && git clone git@github.com:apitrary/pytools.git'
-         ' && cd /root/pytools/pydeployr'
-         ' && pip install -e .'
-         ' && cd /root/pytools/pybuildr'
-         ' && pip install -e .'
-    )
+def create_pydeployr_user():
+    sudo('useradd -c deployr -s /usr/sbin/nologin -d /home/deployr -m deployr')
 
 
 def create_pybuildr_user():
     sudo('useradd -c buildr -s /usr/sbin/nologin -d /home/buildr -m buildr')
 
 
-def add_and_restart_supervisor():
+def add_and_restart_supervisor_for_deployr():
+    sudo('supervisorctl stop deployr ; '
+         'supervisorctl remove deployr ; '
+         'supervisorctl reread && supervisorctl add deployr')
+
+
+def add_and_restart_supervisor_for_buildr():
     sudo('supervisorctl stop buildr ; '
          'supervisorctl remove buildr ; '
          'supervisorctl reread && supervisorctl add buildr')
@@ -66,10 +72,12 @@ def add_and_restart_supervisor():
 
 def initial_setup():
     execute(install_dependencies)
+    execute(put_supervisor_deployr_config)
     execute(put_supervisor_buildr_config)
-    execute(pip_install_pybuildr)
+    execute(create_pydeployr_user)
     execute(create_pybuildr_user)
-    execute(add_and_restart_supervisor)
+    execute(add_and_restart_supervisor_for_deployr)
+    execute(add_and_restart_supervisor_for_buildr)
 
 
 # ROLES-BASED CALLS
