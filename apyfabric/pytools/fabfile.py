@@ -59,12 +59,12 @@ def create_pybuildr_user():
 
 
 def pip_install_pytools():
-#    sudo('pip install git+ssh://git@github.com/apitrary/pytools.git')
-    sudo('rm -rf /root/pytools ;'
-         'cd /root && git clone git@github.com:apitrary/pytools.git && '
-         'cd /root/pytools/pydeployr && pip install . && '
-         'cd /root/pytools/pybuildr && pip install . '
-    )
+    sudo('pip install git+ssh://git@github.com/apitrary/pytools.git')
+#    sudo('rm -rf /root/pytools ;'
+#         'cd /root && git clone git@github.com:apitrary/pytools.git && '
+#         'cd /root/pytools/pydeployr && /usr/bin/python setup.py bdist && /usr/local/bin/easy_install /root/pytools/pydeployr/dist/pydeployr-0.0.1-py2.7.egg '
+#         'cd /root/pytools/pybuildr && /usr/bin/python setup.py bdist && /usr/local/bin/easy_install /root/pytools/pybuildr/dist/pybuildr-0.0.2-py2.7.egg '
+#    )
 
 
 def add_and_restart_supervisor_for_deployr():
