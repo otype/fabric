@@ -24,7 +24,7 @@ env.warn_only = True
 env.roledefs = {
     "TEST": ["devappnode"],
     "STAGING": ["lbapi1.dev.apitrary.net"],
-    "PRODUCTION": ["lbapi1.live.apitrary.net"]
+    "PRODUCTION": ["m2.apitrary.net"]
 }
 
 # SINGLE STEPS
